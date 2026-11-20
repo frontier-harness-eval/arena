@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- scripts/build.mjs writes one copy per board: data-root is the path back to the site root, data-model the board. -->
+<html lang="en" data-root="{{ROOT}}" data-model="{{MODEL}}" data-page="{{PAGE}}">
+<head>
+<meta charset="utf-8">
+<script>
+  /* As the main dashboard: the analytics tag reports the page's full URL, so a page opened with ?final loads no
+     analytics at all. */
+  var FHE_PARAMS = new URLSearchParams(location.search);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  if (!FHE_PARAMS.has("final")) {
+    // Google tag (gtag.js)
+    var tag = document.createElement("script");
+    tag.async = true;
+    tag.src = "https://www.googletagmanager.com/gtag/js?id=G-1ML00Q8PZV";
+    document.head.appendChild(tag);
+    gtag('js', new Date());
+    gtag('config', 'G-1ML00Q8PZV');
+  }
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="FrontierHarness Arena: 22 AI coding agent harnesses on 5 models and the 25 tasks of frontier-harness-eval-lite. Pass rate, cost per pass and speed.">
+<meta name="color-scheme" content="light dark">
+<script>
+  /* The theme, set before first paint so the page never flashes the other one: ?theme=light|dark wins, then a page
+     opened with ?final is dark (deterministic screenshots), then the reader's saved choice; otherwise none is set
+     and the system's preference applies (style.css). */
+  (function () {
+    var p = new URLSearchParams(location.search), t = p.get("theme"), saved = null;
+    try { saved = localStorage.getItem("fhe-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = p.has("final") ? "dark" : saved;
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="icon" href="{{ROOT}}static/logo.png" type="image/png">
+<link rel="stylesheet" href="{{ROOT}}src/style.css">
+<script src="{{ROOT}}src/analytics.js"></script>
+<script type="module" src="{{ROOT}}src/app.js"></script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="{{ROOT}}" aria-label="FrontierHarness Arena home"><img class="brand-logo" src="{{ROOT}}static/logo.png" alt=""><span class="brand-name">FrontierHarness Arena</span></a>
+    <nav class="nav-tabs" aria-label="Primary">
+      <a href="{{ROOT}}"{{LEADERBOARD_CURRENT}}>Leaderboard</a>
+      <a href="{{ROOT}}participate/"{{PARTICIPATE_CURRENT}}>Participate</a>
+    </nav>
+    <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Theme: System. Switch to Light" title="Theme: System. Switch to Light"></button>
+  </div>
+</header>
+<main class="wrap" id="main" aria-busy="true"></main>
+</body>
+</html>
