@@ -168,9 +168,8 @@ h1, h2, h3, p { margin: 0; }
 
 /* --------------------------------------------------------- participate */
 .participate { display: grid; gap: 12px; padding-bottom: 64px; }
-.participate-intro { padding: 14px 16px; color: var(--ink-2); }
-.participate-intro a, .participate-links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--ink-3); text-underline-offset: 2px; }
-.participate-intro a:is(:hover, :focus-visible), .participate-links a:is(:hover, :focus-visible) { text-decoration-color: var(--ink); }
+.participate-links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--ink-3); text-underline-offset: 2px; }
+.participate-links a:is(:hover, :focus-visible) { text-decoration-color: var(--ink); }
 .participate-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .participate-card { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
 .participate-card h2 { font-size: 14px; font-weight: 600; }

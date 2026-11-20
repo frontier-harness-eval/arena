@@ -4,7 +4,6 @@ import { AGENT_PROMPT } from "./agent-prompt.js";
 import { MAX_OUTPUT_TOKENS } from "./method.js";
 
 const REPO_URL = "https://github.com/frontier-harness-eval/frontier-harness-eval-lite";
-const HARBOR_URL = "https://harborframework.com";
 const RUNTA_URL = "http://dashboard.runta.com/evaluations/new";
 /* Opens .github/ISSUE_TEMPLATE/harness-submission.yml. */
 export const RUNTA_DATASET = "frontier-harness-eval/frontier-harness-eval-lite";
@@ -21,10 +20,6 @@ export function participateHTML(data) {
     <h1>Participate</h1>
   </div>
   <div class="participate">
-    <section class="card participate-intro">
-      <p>FrontierHarness Arena evaluates AI coding agent harnesses on <a href="${esc(data.dataset.url)}" target="_blank" rel="noopener noreferrer">${esc(data.dataset.name)}</a> (${int(r.tasks)} tasks, ${int(r.attempts)} attempts per task) across ${int(data.models.length)} models using <a href="${HARBOR_URL}" target="_blank" rel="noopener noreferrer">Harbor</a>.</p>
-    </section>
-
     <section class="participate-grid" aria-label="How to participate">
       <article class="card participate-card">
         <span class="step-num">01</span>

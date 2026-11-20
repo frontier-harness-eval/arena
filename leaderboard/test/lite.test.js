@@ -176,6 +176,8 @@ test("Participate lists two steps: run on Runta, then submit the Harbor link thr
   assert.equal(PR_URL, "https://github.com/frontier-harness-eval/frontier-harness-eval-lite/pulls");
   assert.ok(html.includes(`<a class="button-link secondary" href="${PR_URL}" target="_blank" rel="noopener noreferrer">Open a pull request`));
   assert.doesNotMatch(html, /harbor run/);
+  assert.match(html, /<div class="participate">\s*<section class="participate-grid"/, "the steps come first, with no intro box");
+  assert.doesNotMatch(html, /participate-intro|evaluates AI coding agent harnesses/);
   const form = readFileSync(new URL(`../../.github/ISSUE_TEMPLATE/${new URL(SUBMIT_URL).searchParams.get("template")}`, import.meta.url), "utf8");
   for (const id of ["harness", "version", "model", "harbor-link"]) assert.match(form, new RegExp(`id: ${id}\n`));
 });
