@@ -1,0 +1,16 @@
+{
+  // A static-assets-only Worker: `npm run deploy` builds dist/ and uploads it. No server code and no API.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "arena",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "arena.frontierharness.org",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    "directory": "./dist"
+  }
+}

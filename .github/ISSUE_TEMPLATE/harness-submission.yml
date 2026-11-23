@@ -1,0 +1,36 @@
+name: Harness submission
+description: Submit a harness run from Runta to FrontierHarness Arena.
+title: "Submission: <harness> <version> on <model>"
+body:
+  - type: markdown
+    attributes:
+      value: Run the [Arena benchmark](https://arena.frontierharness.org/participate/) on [Runta Evaluations](http://dashboard.runta.com/evaluations/new), then paste the Harbor link to the finished run below.
+  - type: input
+    id: harness
+    attributes:
+      label: Harness name
+      placeholder: e.g. Claude Code
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Harness version
+      placeholder: e.g. 2.1.0
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      placeholder: e.g. GPT-5.5
+    validations:
+      required: true
+  - type: input
+    id: harbor-link
+    attributes:
+      label: Harbor link
+      description: Public Harbor link for your Arena submission.
+      placeholder: https://
+    validations:
+      required: true
