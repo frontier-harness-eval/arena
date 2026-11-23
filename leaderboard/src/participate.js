@@ -30,12 +30,13 @@ export function participateHTML(data) {
       <article class="card participate-card">
         <span class="step-num">02</span>
         <h2>Submit the dashboard link</h2>
-        <p>Then open a submission issue in the Arena repository with:</p>
+        <p>Open a submission issue in the Arena repository with:</p>
         <ul class="participate-list">
           <li>Harness name and version</li>
           <li>Model</li>
           <li>Public dashboard link to the run</li>
         </ul>
+        <p>Or open a pull request that adds the same details as a file under submissions/.</p>
         <p class="participate-links"><a class="button-link" href="${SUBMIT_URL}" target="_blank" rel="noopener noreferrer">Submit on GitHub <span aria-hidden="true">&nearr;</span></a><a class="button-link secondary" href="${PR_URL}" target="_blank" rel="noopener noreferrer">Open a pull request <span aria-hidden="true">&nearr;</span></a></p>
       </article>
     </section>

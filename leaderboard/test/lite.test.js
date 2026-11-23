@@ -210,10 +210,13 @@ test("Participate step 01 has its heading, two short steps and the Run on Runta 
 test("Participate step 02 starts with the submission issue text and asks for the public dashboard link", () => {
   const html = participateHTML(JSON.parse(read("data/lite.json")));
   const step2 = html.slice(html.indexOf(">02<"));
-  assert.match(step2, /<h2>Submit the dashboard link<\/h2>\s*<p>Then open a submission issue in the Arena repository with:<\/p>/);
+  assert.match(step2, /<h2>Submit the dashboard link<\/h2>\s*<p>Open a submission issue in the Arena repository with:<\/p>/);
+  assert.ok(!step2.includes("Then open"));
+  assert.ok(step2.indexOf("</ul>") < step2.indexOf("<p>Or open a pull request that adds the same details as a file under submissions/.</p>") && step2.indexOf("Or open a pull request") < step2.indexOf("participate-links"), "the pull request hint sits between the list and the buttons");
   assert.doesNotMatch(step2, /participate-note|Enable public link/, "the public-link note moved to step 01");
   assert.ok(step2.indexOf("Submit on GitHub") < step2.indexOf("Open a pull request"));
-  assert.doesNotMatch(step2, /Or open a pull request that adds one file|submissions README|<code>/, "no pull request paragraph");
+  assert.doesNotMatch(step2, /Or open a pull request that adds one file|submissions README|<code>/, "the hint is plain text with no link or code");
+  assert.equal(step2.slice(0, step2.indexOf("participate-links")).match(/<a /g), null, "no links before the buttons");
   assert.ok(step2.includes("Open a pull request") && step2.includes("Submit on GitHub"), "both buttons stay");
   assert.ok(step2.includes("<li>Public dashboard link to the run</li>"));
   assert.doesNotMatch(step2, /Public Harbor link/);
