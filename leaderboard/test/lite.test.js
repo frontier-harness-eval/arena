@@ -6,7 +6,7 @@ import vm from "node:vm";
 import { FAIL, INFRA, LITE, PASS, TIMEOUT, TRIAL_FIELDS, boards, subset } from "../src/lite.js";
 import { methodRows } from "../src/method.js";
 import { THEMES, mountThemeToggle, nextTheme } from "../src/theme.js";
-import { PR_URL, SUBMIT_URL, participateHTML } from "../src/participate.js";
+import { SUBMIT_URL, participateHTML } from "../src/participate.js";
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 const data = JSON.parse(read("data/lite.json"));
@@ -174,8 +174,7 @@ test("Participate lists two steps: run on Runta, then submit the Harbor link thr
   assert.match(html, /<a class="button-link" href="http:\/\/dashboard\.runta\.com\/evaluations\/new" target="_blank"[^>]*>Run on Runta/);
   assert.ok(html.includes(`<a class="button-link" href="${SUBMIT_URL}" target="_blank" rel="noopener noreferrer">Submit on GitHub`));
   assert.equal(html.match(/class="button-link"/g).length, 2);
-  assert.equal(PR_URL, "https://github.com/frontier-harness-eval/arena/pulls");
-  assert.ok(html.includes(`<a class="button-link secondary" href="${PR_URL}" target="_blank" rel="noopener noreferrer">Open a pull request`));
+  assert.doesNotMatch(html, /button-link secondary|Open a pull request|\/pulls"/, "no pull request button");
   assert.doesNotMatch(html, /harbor run/);
   assert.match(html, /<div class="participate">\s*<section class="participate-grid"/, "the steps come first, with no intro box");
   assert.doesNotMatch(html, /participate-intro|evaluates AI coding agent harnesses/);
@@ -193,16 +192,17 @@ test("Participate steps sit side by side in two equal columns, stacking at 800px
   assert.ok(grid.indexOf(">01<") < grid.indexOf(">02<"), "step 01 comes first, so it is the left column");
 });
 
-test("Participate step 01 has its heading, two short steps and the Run on Runta button", () => {
+test("Participate step 01 has its heading, three short steps and the Run on Runta button", () => {
   const html = participateHTML(JSON.parse(read("data/lite.json")));
   const step1 = html.slice(html.indexOf(">01<"), html.indexOf(">02<"));
   const items = [...step1.matchAll(/<li>([^<]*)<\/li>/g)].map((m) => m[1]);
-  assert.deepEqual(items, ["Set up your model provider, then choose your harness (built-in or custom).", "Run a smoke evaluation before you run a full evaluation."]);
+  assert.deepEqual(items, ["Set up your model provider, then choose your harness (built-in or custom).", "Run a smoke evaluation before you run a full evaluation.", "Make sure the run has no errors (AgentTimeoutError is OK)."]);
+  assert.doesNotMatch(step1, /<code>/, "no inline code styling applies here, so AgentTimeoutError stays plain");
   assert.equal(step1.match(/<ol class="participate-steps">/g).length, 1);
   assert.doesNotMatch(step1, /Public Harbor dataset|Python requirements|Smoke evaluation<\/strong>/, "no form field list or separate smoke note");
-  assert.equal(step1.match(/class="participate-note"/g).length, 1);
-  assert.match(step1, /<p class="participate-note">When the evaluation completes, open it in Runta and click <strong>Enable public link<\/strong> under <strong>Public Dashboard link<\/strong>\. Public access is disabled by default/);
-  assert.ok(step1.indexOf("</ol>") < step1.indexOf("participate-note") && step1.indexOf("participate-note") < step1.indexOf("Run on Runta"), "the public-link note sits between the steps and the button");
+  assert.match(step1, /<\/ol>\s*<p class="participate-links"><a class="button-link"[^>]*>Run on Runta/, "the button follows the steps directly");
+  assert.doesNotMatch(html, /participate-note|Enable public link|Public access is disabled/, "no public-link note");
+  assert.doesNotMatch(read("src/style.css"), /participate-note|button-link\.secondary/, "unused note and secondary button styles are gone");
   assert.doesNotMatch(step1, /<details|<pre|data-copy|Prompt for writing a script/, "no script prompt or Copy button");
   assert.doesNotMatch(step1, /<strong>Example:<\/strong>|github\.com\/apache\/maka/, "no worked Maka example line");
 });
@@ -212,12 +212,8 @@ test("Participate step 02 starts with the submission issue text and asks for the
   const step2 = html.slice(html.indexOf(">02<"));
   assert.match(step2, /<h2>Submit the dashboard link<\/h2>\s*<p>Open a submission issue in the Arena repository with:<\/p>/);
   assert.ok(!step2.includes("Then open"));
-  assert.ok(step2.indexOf("</ul>") < step2.indexOf("<p>Or open a pull request that adds the same details as a file under submissions/.</p>") && step2.indexOf("Or open a pull request") < step2.indexOf("participate-links"), "the pull request hint sits between the list and the buttons");
-  assert.doesNotMatch(step2, /participate-note|Enable public link/, "the public-link note moved to step 01");
-  assert.ok(step2.indexOf("Submit on GitHub") < step2.indexOf("Open a pull request"));
-  assert.doesNotMatch(step2, /Or open a pull request that adds one file|submissions README|<code>/, "the hint is plain text with no link or code");
-  assert.equal(step2.slice(0, step2.indexOf("participate-links")).match(/<a /g), null, "no links before the buttons");
-  assert.ok(step2.includes("Open a pull request") && step2.includes("Submit on GitHub"), "both buttons stay");
+  assert.match(step2, /<\/ul>\s*<p class="participate-links"><a class="button-link" href="[^"]*"[^>]*>Submit on GitHub <span aria-hidden="true">&nearr;<\/span><\/a><\/p>/, "the list is followed only by the primary Submit on GitHub button");
+  assert.doesNotMatch(step2, /pull request|submissions\//, "no pull request hint or button");
   assert.ok(step2.includes("<li>Public dashboard link to the run</li>"));
   assert.doesNotMatch(step2, /Public Harbor link/);
 });

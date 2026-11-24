@@ -6,8 +6,6 @@ const REPO_URL = "https://github.com/frontier-harness-eval/arena";
 const RUNTA_URL = "http://dashboard.runta.com/evaluations/new";
 /* Opens .github/ISSUE_TEMPLATE/harness-submission.yml. */
 export const SUBMIT_URL = `${REPO_URL}/issues/new?template=harness-submission.yml`;
-export const PR_URL = `${REPO_URL}/pulls`;
-
 export function participateHTML(data) {
   const r = data.settings;
   const models = data.models.map((m) => m.label).join(", ");
@@ -22,8 +20,8 @@ export function participateHTML(data) {
         <ol class="participate-steps">
           <li>Set up your model provider, then choose your harness (built-in or custom).</li>
           <li>Run a smoke evaluation before you run a full evaluation.</li>
+          <li>Make sure the run has no errors (AgentTimeoutError is OK).</li>
         </ol>
-        <p class="participate-note">When the evaluation completes, open it in Runta and click <strong>Enable public link</strong> under <strong>Public Dashboard link</strong>. Public access is disabled by default, so the link won&rsquo;t open for reviewers until you enable it.</p>
         <p class="participate-links"><a class="button-link" href="${RUNTA_URL}" target="_blank" rel="noopener noreferrer">Run on Runta <span aria-hidden="true">&nearr;</span></a></p>
       </article>
 
@@ -36,8 +34,7 @@ export function participateHTML(data) {
           <li>Model</li>
           <li>Public dashboard link to the run</li>
         </ul>
-        <p>Or open a pull request that adds the same details as a file under submissions/.</p>
-        <p class="participate-links"><a class="button-link" href="${SUBMIT_URL}" target="_blank" rel="noopener noreferrer">Submit on GitHub <span aria-hidden="true">&nearr;</span></a><a class="button-link secondary" href="${PR_URL}" target="_blank" rel="noopener noreferrer">Open a pull request <span aria-hidden="true">&nearr;</span></a></p>
+        <p class="participate-links"><a class="button-link" href="${SUBMIT_URL}" target="_blank" rel="noopener noreferrer">Submit on GitHub <span aria-hidden="true">&nearr;</span></a></p>
       </article>
     </section>
 
