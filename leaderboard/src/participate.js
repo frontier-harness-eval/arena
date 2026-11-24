@@ -16,23 +16,23 @@ export function participateHTML(data) {
     <section class="participate-grid" aria-label="How to participate">
       <article class="card participate-card">
         <span class="step-num">01</span>
-        <h2>Run task on Runta</h2>
+        <h2>Run an evaluation on Runta</h2>
         <ol class="participate-steps">
-          <li>Set up your model provider, then choose your harness (built-in or custom).</li>
-          <li>Run a smoke evaluation before you run a full evaluation.</li>
-          <li>Make sure the run has no errors (AgentTimeoutError is OK).</li>
+          <li>Connect your model provider. Then select your harness (built-in or custom).</li>
+          <li>Run a smoke evaluation first. Then run a full evaluation.</li>
+          <li>Make sure that the evaluation has no errors. An AgentTimeoutError is acceptable.</li>
         </ol>
         <p class="participate-links"><a class="button-link" href="${RUNTA_URL}" target="_blank" rel="noopener noreferrer">Run on Runta <span aria-hidden="true">&nearr;</span></a></p>
       </article>
 
       <article class="card participate-card">
         <span class="step-num">02</span>
-        <h2>Submit the dashboard link</h2>
-        <p>Open a submission issue in the Arena repository with:</p>
+        <h2>Submit the public dashboard link</h2>
+        <p>Open a submission issue in the Arena repository. Include this data:</p>
         <ul class="participate-list">
           <li>Harness name and version</li>
           <li>Model</li>
-          <li>Public dashboard link to the run</li>
+          <li>Public dashboard link to the evaluation</li>
         </ul>
         <p class="participate-links"><a class="button-link" href="${SUBMIT_URL}" target="_blank" rel="noopener noreferrer">Submit on GitHub <span aria-hidden="true">&nearr;</span></a></p>
       </article>

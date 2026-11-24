@@ -168,8 +168,8 @@ test("every page loads the Google tag unless opened with ?final, then the analyt
 test("Participate lists two steps: run on Runta, then submit the Harbor link through the issue template", () => {
   const html = participateHTML(JSON.parse(read("data/lite.json")));
   assert.equal(html.match(/class="step-num"/g).length, 2);
-  assert.ok(html.includes("<h2>Run task on Runta</h2>"));
-  assert.ok(html.includes("<h2>Submit the dashboard link</h2>"));
+  assert.ok(html.includes("<h2>Run an evaluation on Runta</h2>"));
+  assert.ok(html.includes("<h2>Submit the public dashboard link</h2>"));
   assert.ok(!html.includes("Submit the Harbor link"));
   assert.match(html, /<a class="button-link" href="http:\/\/dashboard\.runta\.com\/evaluations\/new" target="_blank"[^>]*>Run on Runta/);
   assert.ok(html.includes(`<a class="button-link" href="${SUBMIT_URL}" target="_blank" rel="noopener noreferrer">Submit on GitHub`));
@@ -196,7 +196,7 @@ test("Participate step 01 has its heading, three short steps and the Run on Runt
   const html = participateHTML(JSON.parse(read("data/lite.json")));
   const step1 = html.slice(html.indexOf(">01<"), html.indexOf(">02<"));
   const items = [...step1.matchAll(/<li>([^<]*)<\/li>/g)].map((m) => m[1]);
-  assert.deepEqual(items, ["Set up your model provider, then choose your harness (built-in or custom).", "Run a smoke evaluation before you run a full evaluation.", "Make sure the run has no errors (AgentTimeoutError is OK)."]);
+  assert.deepEqual(items, ["Connect your model provider. Then select your harness (built-in or custom).", "Run a smoke evaluation first. Then run a full evaluation.", "Make sure that the evaluation has no errors. An AgentTimeoutError is acceptable."]);
   assert.doesNotMatch(step1, /<code>/, "no inline code styling applies here, so AgentTimeoutError stays plain");
   assert.equal(step1.match(/<ol class="participate-steps">/g).length, 1);
   assert.doesNotMatch(step1, /Public Harbor dataset|Python requirements|Smoke evaluation<\/strong>/, "no form field list or separate smoke note");
@@ -210,12 +210,23 @@ test("Participate step 01 has its heading, three short steps and the Run on Runt
 test("Participate step 02 starts with the submission issue text and asks for the public dashboard link", () => {
   const html = participateHTML(JSON.parse(read("data/lite.json")));
   const step2 = html.slice(html.indexOf(">02<"));
-  assert.match(step2, /<h2>Submit the dashboard link<\/h2>\s*<p>Open a submission issue in the Arena repository with:<\/p>/);
+  assert.match(step2, /<h2>Submit the public dashboard link<\/h2>\s*<p>Open a submission issue in the Arena repository\. Include this data:<\/p>/);
   assert.ok(!step2.includes("Then open"));
   assert.match(step2, /<\/ul>\s*<p class="participate-links"><a class="button-link" href="[^"]*"[^>]*>Submit on GitHub <span aria-hidden="true">&nearr;<\/span><\/a><\/p>/, "the list is followed only by the primary Submit on GitHub button");
   assert.doesNotMatch(step2, /pull request|submissions\//, "no pull request hint or button");
-  assert.ok(step2.includes("<li>Public dashboard link to the run</li>"));
+  assert.ok(step2.includes("<li>Public dashboard link to the evaluation</li>"));
   assert.doesNotMatch(step2, /Public Harbor link/);
+});
+
+test("Participate step copy follows ASD-STE100: short sentences, simple words, one name per thing", () => {
+  const html = participateHTML(JSON.parse(read("data/lite.json")));
+  const grid = html.slice(html.indexOf('<section class="participate-grid"'), html.indexOf("</section>"));
+  const text = grid.replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ");
+  for (const sentence of text.split(/(?<=[.:])\s/)) assert.ok(sentence.trim().split(" ").length <= 20, `over 20 words: ${sentence}`);
+  assert.doesNotMatch(text, /\b(ensure|via|utilize|choose|set up|OK)\b/i, "unapproved words");
+  assert.doesNotMatch(text, /\b(the|a) run\b/, "the noun is evaluation, not run");
+  assert.doesNotMatch(text, /(?<!public )dashboard link/i, "the link is always the public dashboard link");
+  assert.doesNotMatch(text, /\w+ing\b/, "no -ing forms");
 });
 
 test("copying a selection out of a code block reports copy_code, and no Copy buttons remain", () => {
