@@ -7,6 +7,7 @@
    A page opened with ?final loads no tag (index.html) and reports nothing. */
 (function () {
   "use strict";
+  if (!arenaAnalyticsEnabled) return;
   // Analytics keeps 100 characters of a value.
   const clip = (s) => (s || "").replace(/\s+/g, " ").trim().slice(0, 100) || undefined;
   const send = (name, params) => { if (!new URLSearchParams(location.search).has("final")) gtag("event", name, params); };

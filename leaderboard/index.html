@@ -9,14 +9,15 @@
   var FHE_PARAMS = new URLSearchParams(location.search);
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  if (!FHE_PARAMS.has("final")) {
+  const arenaAnalyticsEnabled = location.hostname === "arena.frontierharness.org" && !FHE_PARAMS.has("final");
+  if (arenaAnalyticsEnabled) {
     // Google tag (gtag.js)
     var tag = document.createElement("script");
     tag.async = true;
-    tag.src = "https://www.googletagmanager.com/gtag/js?id=G-1ML00Q8PZV";
+    tag.src = "https://www.googletagmanager.com/gtag/js?id=G-D6VNV9KXVW";
     document.head.appendChild(tag);
     gtag('js', new Date());
-    gtag('config', 'G-1ML00Q8PZV');
+    gtag('config', 'G-D6VNV9KXVW');
   }
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1">

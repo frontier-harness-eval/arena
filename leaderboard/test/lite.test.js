@@ -155,12 +155,14 @@ test("public copy names no confidence intervals, other datasets, sandboxes or re
   for (const f of files) assert.doesNotMatch(read(f), /confidence|bootstrap|\bci\b|TB2|TB4|tb21|tb4|terminal-bench|replay|sandbox/i, f);
 });
 
-test("every page loads the Google tag unless opened with ?final, then the analytics script", () => {
+test("production Arena pages load the Arena tag unless opened with ?final", () => {
   const html = read("index.html");
-  const tag = html.indexOf('if (!FHE_PARAMS.has("final"))');
+  assert.ok(html.includes('location.hostname === "arena.frontierharness.org" && !FHE_PARAMS.has("final")'));
+  assert.ok(read("src/analytics.js").includes("if (!arenaAnalyticsEnabled) return;"));
+  const tag = html.indexOf('if (arenaAnalyticsEnabled)');
   assert.ok(tag > 0);
-  assert.ok(html.indexOf("googletagmanager.com/gtag/js?id=G-1ML00Q8PZV") > tag);
-  assert.match(html, /gtag\('config', 'G-1ML00Q8PZV'\)/);
+  assert.ok(html.indexOf("googletagmanager.com/gtag/js?id=G-D6VNV9KXVW") > tag);
+  assert.match(html, /gtag\('config', 'G-D6VNV9KXVW'\)/);
   assert.ok(html.indexOf('<script src="{{ROOT}}src/analytics.js"></script>') > tag);
   assert.match(read("src/analytics.js"), /has\("final"\)\) gtag\("event"/);
 });
