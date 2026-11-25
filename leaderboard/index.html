@@ -35,7 +35,10 @@
     if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
   })();
 </script>
-<link rel="icon" href="{{ROOT}}static/logo.png" type="image/png">
+<link rel="icon" href="{{ROOT}}static/arena-icon.svg" type="image/svg+xml">
+<link rel="icon" href="{{ROOT}}static/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="{{ROOT}}static/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="{{ROOT}}static/apple-touch-icon.png">
 <link rel="stylesheet" href="{{ROOT}}src/style.css">
 <script src="{{ROOT}}src/analytics.js"></script>
 <script type="module" src="{{ROOT}}src/app.js"></script>
@@ -43,7 +46,7 @@
 <body>
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="{{ROOT}}" aria-label="FrontierHarness Arena home"><img class="brand-logo" src="{{ROOT}}static/logo.png" alt=""><span class="brand-name">FrontierHarness Arena</span></a>
+    <a class="brand" href="{{ROOT}}" aria-label="FrontierHarness Arena home"><img class="brand-logo" src="{{ROOT}}static/arena-icon.svg" alt=""><span class="brand-name">FrontierHarness</span><span class="brand-pill" aria-hidden="true">ARENA</span></a>
     <nav class="nav-tabs" aria-label="Primary">
       <a href="{{ROOT}}"{{LEADERBOARD_CURRENT}}>Leaderboard</a>
       <a href="{{ROOT}}participate/"{{PARTICIPATE_CURRENT}}>Participate</a>

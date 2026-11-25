@@ -22,6 +22,7 @@
   --button-white-hover: light-dark(#f2f2f2, #f2f2f2);
   --button-white-edge: light-dark(#e0e0dc, #ffffff00);
   --on-white: light-dark(#111111, #111111);
+  --arena-navy: light-dark(#0b1631, #0b1631);
   --shape-ring: light-dark(#3a3a38cc, #dbdbdbe6);
   --kill-line: light-dark(#8f8f8ae6, #616161eb);
   --muted-mark: light-dark(#a6a6a1, #777777);
@@ -48,7 +49,9 @@ h1, h2, h3, p { margin: 0; }
 .nav { position: sticky; top: 0; z-index: 30; height: var(--nav-h); background: var(--bg); border-bottom: 1px solid var(--border); }
 .nav-inner { height: 100%; display: flex; align-items: center; gap: 24px; }
 .brand { font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; }
-.brand-logo { width: 26px; height: 26px; border-radius: 6px; margin-right: 8px; background: #fff; box-shadow: 0 0 0 1px var(--border); flex: none; }
+.brand-logo { width: 28px; height: 28px; margin-right: 8px; flex: none; }
+/* The logo's navy ARENA pill (static/arena-logo.svg), which is unreadable inside a nav-sized tile. */
+.brand-pill { margin-left: 8px; padding: 4px 7px 4px 8px; border-radius: 999px; background: var(--arena-navy); box-shadow: 0 0 0 1px var(--border); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: .16em; line-height: 1; }
 .nav-tabs { display: flex; align-items: stretch; gap: 4px; height: 100%; }
 .nav-tabs a { position: relative; display: inline-flex; align-items: center; padding: 0 10px; font-size: 13px; color: var(--ink-2); transition: color .15s; white-space: nowrap; }
 .nav-tabs a:is(:hover, :focus-visible) { color: var(--ink); outline: none; }
@@ -217,6 +220,6 @@ a.button-link.button-white:focus-visible { box-shadow: inset 0 0 0 1px var(--but
   .rank-row strong { font-size: 12px; }
   .method-table td:first-child { white-space: normal; width: 36%; padding-right: 10px; }
 }
-@media (max-width: 480px) { .brand-name { display: none; } }
+@media (max-width: 480px) { .brand-name { display: none; } .brand-pill { margin-left: 0; } }
 @media (hover: none) { .rank-row:hover { background: none; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

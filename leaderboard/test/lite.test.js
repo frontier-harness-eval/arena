@@ -369,11 +369,41 @@ test("every palette colour has a light and a dark value, and data-theme sets the
   const css = read("src/style.css"), rootBlock = css.match(/:root \{([^}]*)\}/)[1];
   assert.match(rootBlock, /color-scheme: light dark;/);
   const colours = [...rootBlock.matchAll(/(--[\w-]+): ([^;]+);/g)].filter(([, , v]) => /#|light-dark/.test(v));
-  assert.equal(colours.length, 21);
+  assert.equal(colours.length, 22);
   for (const [, name, value] of colours) assert.match(value, /^light-dark\(#[0-9a-f]{3,8}, #[0-9a-f]{3,8}\)$/, name);
   assert.match(css, /:root\[data-theme="light"\] \{ color-scheme: light; \}/);
   assert.match(css, /:root\[data-theme="dark"\] \{ color-scheme: dark; \}/);
   const rest = css.slice(css.indexOf(rootBlock) + rootBlock.length);
   const fixed = [...rest.matchAll(/#[0-9a-f]{3,8}\b/gi)].map((m) => m[0]);
-  assert.deepEqual([...new Set(fixed)].sort(), ["#dc7b6a1a", "#fff"], "outside the palette only the logo's white and the translucent kill zone");
+  assert.deepEqual([...new Set(fixed)].sort(), ["#dc7b6a1a", "#fff"], "outside the palette only the ARENA pill's white text and the translucent kill zone");
+});
+
+test("the Arena logo is the FH mark on a white tile over a navy ARENA pill, with the tile alone at icon sizes", () => {
+  const logo = read("static/arena-logo.svg"), icon = read("static/arena-icon.svg"), css = read("src/style.css");
+  const mark = `href="data:image/png;base64,${readFileSync(new URL("../static/logo.png", import.meta.url)).toString("base64")}"`;
+  for (const svg of [logo, icon]) {
+    assert.ok(svg.includes(mark), "built from the dashboard's FH mark, embedded so the SVG stands alone");
+    assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="0 0 512 512"[^>]*role="img" aria-label="FrontierHarness Arena">/);
+    assert.match(svg, /<rect x="3" y="3" width="506" height="506" rx="105" fill="#ffffff"\/>/, "a white rounded tile");
+    assert.doesNotMatch(svg, /<text|font-family|\.jpe?g/, "no font and no reference JPEG");
+  }
+  const navy = css.match(/--arena-navy: light-dark\((#[0-9a-f]{6}), \1\)/)[1];
+  assert.match(logo, new RegExp(`<rect x="138" y="393" width="236" height="66" rx="33" fill="${navy}"/>`), "the pill, centred under the mark");
+  assert.equal((logo.match(/<g [^>]*stroke="#ffffff"[^>]*>(.*?)<\/g>/)[1].match(/<path /g) || []).length, 5, "A R E N A, drawn as strokes");
+  assert.doesNotMatch(icon, new RegExp(navy), "no pill where it would be unreadable");
+  const png = (f) => { const b = readFileSync(new URL(`../static/${f}`, import.meta.url)); return { w: b.readUInt32BE(16), h: b.readUInt32BE(20), alpha: b[25] === 6 }; };
+  assert.deepEqual(png("apple-touch-icon.png"), { w: 180, h: 180, alpha: false }, "opaque, as iOS rounds it itself");
+  assert.deepEqual(png("favicon-32.png"), { w: 32, h: 32, alpha: true });
+  assert.deepEqual(png("favicon-48.png"), { w: 48, h: 48, alpha: true });
+});
+
+test("the nav and the head use the Arena logo", () => {
+  const html = read("index.html"), css = read("src/style.css");
+  assert.ok(html.includes('<a class="brand" href="{{ROOT}}" aria-label="FrontierHarness Arena home"><img class="brand-logo" src="{{ROOT}}static/arena-icon.svg" alt=""><span class="brand-name">FrontierHarness</span><span class="brand-pill" aria-hidden="true">ARENA</span></a>'));
+  for (const link of ['<link rel="icon" href="{{ROOT}}static/arena-icon.svg" type="image/svg+xml">', '<link rel="icon" href="{{ROOT}}static/favicon-32.png" type="image/png" sizes="32x32">',
+    '<link rel="icon" href="{{ROOT}}static/favicon-48.png" type="image/png" sizes="48x48">', '<link rel="apple-touch-icon" href="{{ROOT}}static/apple-touch-icon.png">']) assert.ok(html.includes(link), link);
+  assert.doesNotMatch(html, /static\/logo\.png/, "the bare FH mark is only the logo's source");
+  for (const [, f] of html.matchAll(/\{\{ROOT\}\}(static\/[^"]+)"/g)) assert.ok(existsSync(new URL(`../${f}`, import.meta.url)), f);
+  assert.match(css, /\.brand-pill \{[^}]*background: var\(--arena-navy\);[^}]*color: #fff;[^}]*font-weight: 700; letter-spacing: \.16em;/);
+  assert.match(css, /@media \(max-width: 480px\) \{ \.brand-name \{ display: none; \} \.brand-pill \{ margin-left: 0; \} \}/, "on phones the pill stays and the name goes");
 });
