@@ -84,7 +84,7 @@ function scatterHTML(v) {
     <div class="scatter-toolbar"><div class="board-toggles">${modelsHTML(v, false)}</div>
       <div class="seg metric-toggle" role="group" aria-label="Plot against"><button type="button" aria-pressed="true" data-metric="cost">Cost</button><button type="button" aria-pressed="false" data-metric="time">Speed</button></div></div>
     <div class="scatter-plot"></div><div class="scatter-axis-x"></div></section>
-  <p class="scatter-cta"><a class="button-link" href="${ROOT}participate/">${TROPHY}Participate</a><a class="button-link button-outline" href="${REPO_URL}/" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}GitHub</a></p>`;
+  <p class="scatter-cta"><a class="button-link" href="${ROOT}participate/">${TROPHY}Participate</a><a class="button-link button-white" href="${REPO_URL}/" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}GitHub</a></p>`;
 }
 
 function mountScatter(root, v) {

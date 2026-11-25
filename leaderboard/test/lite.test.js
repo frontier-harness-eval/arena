@@ -235,7 +235,7 @@ test("a centered frontier-orange Participate button sits right under the chart, 
   assert.match(head, /<div class="page-head">\s*<h1>Leaderboard<\/h1>\s*<\/div>/, "the head holds only the heading");
   const scatter = app.slice(app.indexOf("function scatterHTML("), app.indexOf("function mountScatter("));
   const cta = '<p class="scatter-cta"><a class="button-link" href="${ROOT}participate/">${TROPHY}Participate</a>'
-    + '<a class="button-link button-outline" href="${REPO_URL}/" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}GitHub</a></p>';
+    + '<a class="button-link button-white" href="${REPO_URL}/" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}GitHub</a></p>';
   assert.ok(scatter.includes(`<div class="scatter-axis-x"></div></section>\n  ${cta}`), "directly after the chart card, Participate first, GitHub beside it");
   assert.equal(app.split("participate/").length - 1, 1, "one Participate button, rendered on every board page");
   assert.match(app, /const ROOT = document\.documentElement\.dataset\.root/, "the same root-relative path as the nav's Participate tab");
@@ -259,22 +259,23 @@ test("the Participate button's trophy icon is drawn like the theme icons and add
   assert.doesNotMatch(mark, /<title|<text|aria-label/, "the GitHub button's name and analytics label stay \"GitHub\"");
 });
 
-test("the GitHub button is an outline: theme text and an orange border, since orange text is under 4.5:1 on the light page", () => {
+test("the GitHub button is solid white with near-black text in both themes, edged grey in light only, with no orange", () => {
   const css = read("src/style.css");
-  assert.match(css, /a\.button-link\.button-outline \{ color: var\(--ink\); background: transparent; box-shadow: inset 0 0 0 1\.5px var\(--frontier\); \}/);
-  assert.match(css, /a\.button-link\.button-outline:is\(:hover, :focus-visible\) \{ filter: none; background: color-mix\(in oklab, var\(--frontier\) 14%, transparent\); \}/);
-  assert.match(css, /a\.button-link\.button-outline:focus-visible \{ box-shadow: inset 0 0 0 1\.5px var\(--frontier\), 0 0 0 2px var\(--bg\), 0 0 0 4px var\(--frontier\); \}/);
-  const hex = (name) => css.match(new RegExp(`${name}: light-dark\\(#([0-9a-f]{6}), #([0-9a-f]{6})\\)`)).slice(1);
-  const [orange, bg, ink] = [hex("--frontier"), hex("--bg"), hex("--ink")];
-  const rgb = (h) => [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-  const lum = (h) => rgb(h).map((c) => c / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((s, c, i) => s + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const pair = (name) => css.match(new RegExp(`${name}: light-dark\\(#([0-9a-f]{6,8}), #([0-9a-f]{6,8})\\)`)).slice(1);
+  assert.deepEqual(pair("--button-white"), ["ffffff", "ffffff"]);
+  assert.deepEqual(pair("--on-white"), ["111111", "111111"]);
+  assert.deepEqual(pair("--button-white-hover"), ["f2f2f2", "f2f2f2"]);
+  assert.deepEqual(pair("--button-white-edge"), [pair("--border")[0], "ffffff00"], "the light theme's border grey; transparent in dark");
+  assert.match(css, /a\.button-link\.button-white \{ color: var\(--on-white\); background: var\(--button-white\); box-shadow: inset 0 0 0 1px var\(--button-white-edge\); \}/);
+  assert.match(css, /a\.button-link\.button-white:is\(:hover, :focus-visible\) \{ filter: none; background: var\(--button-white-hover\); \}/);
+  assert.match(css, /a\.button-link\.button-white:focus-visible \{ box-shadow: inset 0 0 0 1px var\(--button-white-edge\), 0 0 0 2px var\(--bg\), 0 0 0 4px var\(--ink-3\); \}/, "a neutral focus ring");
+  const rules = css.match(/a\.button-link\.button-white[^{]*\{[^}]*\}/g);
+  assert.equal(rules.length, 3);
+  for (const r of rules) assert.doesNotMatch(r, /frontier|outline|accent/, r);
+  assert.doesNotMatch(css, /button-outline/);
+  const lum = (h) => [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((s, c, i) => s + c * [0.2126, 0.7152, 0.0722][i], 0);
   const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
-  const tint = (h, over) => rgb(h).map((c, i) => Math.round(c * 0.14 + rgb(over)[i] * 0.86).toString(16).padStart(2, "0")).join("");
-  assert.ok(ratio(orange[0], bg[0]) < 4.5, "orange text would fail on the light page");
-  for (const t of [0, 1]) {
-    assert.ok(ratio(ink[t], bg[t]) >= 4.5, `${["light", "dark"][t]} text`);
-    assert.ok(ratio(ink[t], tint(orange[t], bg[t])) >= 4.5, `${["light", "dark"][t]} hovered text`);
-  }
+  for (const t of [0, 1]) for (const bg of [pair("--button-white")[t], pair("--button-white-hover")[t]]) assert.ok(ratio(pair("--on-white")[t], bg) >= 4.5, `${["light", "dark"][t]} ${bg}`);
 });
 
 test("every primary button-link is frontier orange with near-black text, and its text keeps 4.5:1 contrast in both themes, hovered or not", () => {
@@ -284,7 +285,7 @@ test("every primary button-link is frontier orange with near-black text, and its
   assert.match(css, /\na\.button-link:focus-visible \{ box-shadow: 0 0 0 2px var\(--bg\), 0 0 0 4px var\(--frontier\); \}/);
   assert.doesNotMatch(css, /--accent|button-frontier/, "no blue variant left");
   assert.doesNotMatch(read("src/participate.js"), /class="button-link [^"]/, "Participate's buttons are all primary");
-  assert.deepEqual(read("src/app.js").match(/class="button-link [^"]*"/g), ['class="button-link button-outline"'], "the GitHub button is the only outline");
+  assert.deepEqual(read("src/app.js").match(/class="button-link [^"]*"/g), ['class="button-link button-white"'], "the GitHub button is the only variant");
   const pair = (name) => css.match(new RegExp(`${name}: light-dark\\(#([0-9a-f]{6}), #([0-9a-f]{6})\\)`)).slice(1);
   const [bgs, fgs] = [pair("--frontier"), pair("--on-frontier")];
   assert.deepEqual(bgs, ["ea6c0a", "fb923c"]);
@@ -366,7 +367,7 @@ test("every palette colour has a light and a dark value, and data-theme sets the
   const css = read("src/style.css"), rootBlock = css.match(/:root \{([^}]*)\}/)[1];
   assert.match(rootBlock, /color-scheme: light dark;/);
   const colours = [...rootBlock.matchAll(/(--[\w-]+): ([^;]+);/g)].filter(([, , v]) => /#|light-dark/.test(v));
-  assert.equal(colours.length, 17);
+  assert.equal(colours.length, 21);
   for (const [, name, value] of colours) assert.match(value, /^light-dark\(#[0-9a-f]{3,8}, #[0-9a-f]{3,8}\)$/, name);
   assert.match(css, /:root\[data-theme="light"\] \{ color-scheme: light; \}/);
   assert.match(css, /:root\[data-theme="dark"\] \{ color-scheme: dark; \}/);

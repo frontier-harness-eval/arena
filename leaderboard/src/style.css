@@ -17,6 +17,11 @@
   --frontier: light-dark(#ea6c0a, #fb923c);
   /* White on the frontier orange is under 4.5:1 in both themes; #111 is at least 6:1, hover included. */
   --on-frontier: light-dark(#111111, #111111);
+  /* The white button: solid white in both themes, edged in the light theme's border grey so it shows on a light page. */
+  --button-white: light-dark(#ffffff, #ffffff);
+  --button-white-hover: light-dark(#f2f2f2, #f2f2f2);
+  --button-white-edge: light-dark(#e0e0dc, #ffffff00);
+  --on-white: light-dark(#111111, #111111);
   --shape-ring: light-dark(#3a3a38cc, #dbdbdbe6);
   --kill-line: light-dark(#8f8f8ae6, #616161eb);
   --muted-mark: light-dark(#a6a6a1, #777777);
@@ -183,10 +188,9 @@ a.button-link { display: inline-flex; align-items: center; gap: 6px; padding: 7p
 a.button-link:is(:hover, :focus-visible) { filter: brightness(1.12); outline: none; }
 a.button-link:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--frontier); }
 a.button-link > svg { flex: none; }
-/* Orange text on the page is 2.94:1 in light, so the outline variant keeps the theme's text colour. */
-a.button-link.button-outline { color: var(--ink); background: transparent; box-shadow: inset 0 0 0 1.5px var(--frontier); }
-a.button-link.button-outline:is(:hover, :focus-visible) { filter: none; background: color-mix(in oklab, var(--frontier) 14%, transparent); }
-a.button-link.button-outline:focus-visible { box-shadow: inset 0 0 0 1.5px var(--frontier), 0 0 0 2px var(--bg), 0 0 0 4px var(--frontier); }
+a.button-link.button-white { color: var(--on-white); background: var(--button-white); box-shadow: inset 0 0 0 1px var(--button-white-edge); }
+a.button-link.button-white:is(:hover, :focus-visible) { filter: none; background: var(--button-white-hover); }
+a.button-link.button-white:focus-visible { box-shadow: inset 0 0 0 1px var(--button-white-edge), 0 0 0 2px var(--bg), 0 0 0 4px var(--ink-3); }
 /* ---------------------------------------------------- narrow: rail bar */
 @media (max-width: 1050px) {
   .results { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 18px; }
