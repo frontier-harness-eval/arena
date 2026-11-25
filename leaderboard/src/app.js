@@ -74,12 +74,15 @@ function scatterModel(rows, metric) {
   return { x, y, xPos, yPos: (h) => norm(y(h), yMin, yMax), yTickPos: (t) => norm(t, yMin, yMax), frontier, xTicks, yTicks };
 }
 
+/* Drawn like the theme toggle's icons. */
+const TROPHY = '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 2.5h7v3a3.5 3.5 0 0 1-7 0z"/><path d="M4.5 3.5H2.5v.8a2.2 2.2 0 0 0 2.2 2.2M11.5 3.5h2v.8a2.2 2.2 0 0 1-2.2 2.2"/><path d="M8 9v3M5.5 13.5h5"/></svg>';
+
 function scatterHTML(v) {
   return `<section class="card scatter" aria-label="Pass rate against cost">
     <div class="scatter-toolbar"><div class="board-toggles">${modelsHTML(v, false)}</div>
       <div class="seg metric-toggle" role="group" aria-label="Plot against"><button type="button" aria-pressed="true" data-metric="cost">Cost</button><button type="button" aria-pressed="false" data-metric="time">Speed</button></div></div>
     <div class="scatter-plot"></div><div class="scatter-axis-x"></div></section>
-  <p class="scatter-cta"><a class="button-link button-frontier" href="${ROOT}participate/">Participate</a></p>`;
+  <p class="scatter-cta"><a class="button-link" href="${ROOT}participate/">${TROPHY}Participate</a></p>`;
 }
 
 function mountScatter(root, v) {

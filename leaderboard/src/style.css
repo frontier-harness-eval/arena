@@ -12,7 +12,6 @@
   --ink-2: light-dark(#575753, #a3a3a0);
   --ink-3: light-dark(#878782, #6f6f6c);
   --grid: light-dark(#e9e9e5, #242423);
-  --accent: light-dark(#1f6fd1, #3987e5);
   --pass: light-dark(#13805b, #199e70);
   --fail: light-dark(#c83c3c, #e66767);
   --frontier: light-dark(#ea6c0a, #fb923c);
@@ -180,11 +179,10 @@ h1, h2, h3, p { margin: 0; }
 .participate-list { margin: 0; padding-left: 18px; color: var(--ink-2); display: grid; gap: 4px; }
 .participate-steps { margin: 0; padding-left: 20px; color: var(--ink-2); display: grid; gap: 5px; }
 .participate-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; font-size: 12.5px; }
-a.button-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; color: #fff; background: var(--accent); border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; transition: filter .15s; }
+a.button-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; color: var(--on-frontier); background: var(--frontier); border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; transition: filter .15s; }
 a.button-link:is(:hover, :focus-visible) { filter: brightness(1.12); outline: none; }
-a.button-link:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
-a.button-link.button-frontier { color: var(--on-frontier); background: var(--frontier); }
-a.button-link.button-frontier:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--frontier); }
+a.button-link:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--frontier); }
+a.button-link > svg { flex: none; }
 /* ---------------------------------------------------- narrow: rail bar */
 @media (max-width: 1050px) {
   .results { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 18px; }
