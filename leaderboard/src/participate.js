@@ -2,7 +2,7 @@
 import { esc, int } from "./format.js";
 import { MAX_OUTPUT_TOKENS } from "./method.js";
 
-const REPO_URL = "https://github.com/frontier-harness-eval/arena";
+export const REPO_URL = "https://github.com/frontier-harness-eval/arena";
 const RUNTA_URL = "http://dashboard.runta.com/evaluations/new";
 /* Opens .github/ISSUE_TEMPLATE/harness-submission.yml. */
 export const SUBMIT_URL = `${REPO_URL}/issues/new?template=harness-submission.yml`;

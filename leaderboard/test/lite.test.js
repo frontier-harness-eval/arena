@@ -6,7 +6,7 @@ import vm from "node:vm";
 import { FAIL, INFRA, LITE, PASS, TIMEOUT, TRIAL_FIELDS, boards, subset } from "../src/lite.js";
 import { methodRows } from "../src/method.js";
 import { THEMES, mountThemeToggle, nextTheme } from "../src/theme.js";
-import { SUBMIT_URL, participateHTML } from "../src/participate.js";
+import { REPO_URL, SUBMIT_URL, participateHTML } from "../src/participate.js";
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 const data = JSON.parse(read("data/lite.json"));
@@ -234,11 +234,14 @@ test("a centered frontier-orange Participate button sits right under the chart, 
   const head = app.slice(app.indexOf("function headHTML()"), app.indexOf("// --------------------------------------------------------------- scatter"));
   assert.match(head, /<div class="page-head">\s*<h1>Leaderboard<\/h1>\s*<\/div>/, "the head holds only the heading");
   const scatter = app.slice(app.indexOf("function scatterHTML("), app.indexOf("function mountScatter("));
-  const cta = '<p class="scatter-cta"><a class="button-link" href="${ROOT}participate/">${TROPHY}Participate</a></p>';
-  assert.ok(scatter.includes(`<div class="scatter-axis-x"></div></section>\n  ${cta}`), "directly after the chart card");
+  const cta = '<p class="scatter-cta"><a class="button-link" href="${ROOT}participate/">${TROPHY}Participate</a>'
+    + '<a class="button-link button-outline" href="${REPO_URL}/" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}GitHub</a></p>';
+  assert.ok(scatter.includes(`<div class="scatter-axis-x"></div></section>\n  ${cta}`), "directly after the chart card, Participate first, GitHub beside it");
   assert.equal(app.split("participate/").length - 1, 1, "one Participate button, rendered on every board page");
   assert.match(app, /const ROOT = document\.documentElement\.dataset\.root/, "the same root-relative path as the nav's Participate tab");
-  assert.match(css, /\.scatter-cta \{ display: flex; justify-content: center;/);
+  assert.match(app, /import \{ REPO_URL, participateHTML \} from "\.\/participate\.js";/);
+  assert.equal(`${REPO_URL}/`, "https://github.com/frontier-harness-eval/arena/");
+  assert.match(css, /\.scatter-cta \{ display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;/, "the pair is centered and wraps on narrow screens");
   assert.match(css, /\.pareto-line \{[^}]*stroke: var\(--frontier\)/, "the frontier line's colour");
   assert.match(read("src/analytics.js"), /\["link", "a\[href\]"\]/, "button_click reports every link, this one included");
 });
@@ -251,15 +254,37 @@ test("the Participate button's trophy icon is drawn like the theme icons and add
   assert.match(theme, /viewBox="0 0 16 16"[^>]*fill="none" stroke="currentColor" stroke-width="1\.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"/, "the same stroke style as the theme toggle");
   assert.doesNotMatch(svg, /<title|<text|aria-label/, "the accessible name and analytics label stay \"Participate\"");
   assert.equal(svg.replace(/<[^>]+>/g, ""), "");
+  const mark = app.match(/const GITHUB_MARK = '(<svg[^']*<\/svg>)';/)[1];
+  assert.ok(mark.startsWith('<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">'), "the GitHub mark is the trophy's size, in the text colour");
+  assert.doesNotMatch(mark, /<title|<text|aria-label/, "the GitHub button's name and analytics label stay \"GitHub\"");
 });
 
-test("every button-link is frontier orange with near-black text, and its text keeps 4.5:1 contrast in both themes, hovered or not", () => {
+test("the GitHub button is an outline: theme text and an orange border, since orange text is under 4.5:1 on the light page", () => {
+  const css = read("src/style.css");
+  assert.match(css, /a\.button-link\.button-outline \{ color: var\(--ink\); background: transparent; box-shadow: inset 0 0 0 1\.5px var\(--frontier\); \}/);
+  assert.match(css, /a\.button-link\.button-outline:is\(:hover, :focus-visible\) \{ filter: none; background: color-mix\(in oklab, var\(--frontier\) 14%, transparent\); \}/);
+  assert.match(css, /a\.button-link\.button-outline:focus-visible \{ box-shadow: inset 0 0 0 1\.5px var\(--frontier\), 0 0 0 2px var\(--bg\), 0 0 0 4px var\(--frontier\); \}/);
+  const hex = (name) => css.match(new RegExp(`${name}: light-dark\\(#([0-9a-f]{6}), #([0-9a-f]{6})\\)`)).slice(1);
+  const [orange, bg, ink] = [hex("--frontier"), hex("--bg"), hex("--ink")];
+  const rgb = (h) => [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const lum = (h) => rgb(h).map((c) => c / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((s, c, i) => s + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+  const tint = (h, over) => rgb(h).map((c, i) => Math.round(c * 0.14 + rgb(over)[i] * 0.86).toString(16).padStart(2, "0")).join("");
+  assert.ok(ratio(orange[0], bg[0]) < 4.5, "orange text would fail on the light page");
+  for (const t of [0, 1]) {
+    assert.ok(ratio(ink[t], bg[t]) >= 4.5, `${["light", "dark"][t]} text`);
+    assert.ok(ratio(ink[t], tint(orange[t], bg[t])) >= 4.5, `${["light", "dark"][t]} hovered text`);
+  }
+});
+
+test("every primary button-link is frontier orange with near-black text, and its text keeps 4.5:1 contrast in both themes, hovered or not", () => {
   const css = read("src/style.css");
   assert.match(css, /\na\.button-link \{[^}]*color: var\(--on-frontier\); background: var\(--frontier\);/);
   assert.match(css, /\na\.button-link:is\(:hover, :focus-visible\) \{ filter: brightness\(1\.12\); outline: none; \}/);
   assert.match(css, /\na\.button-link:focus-visible \{ box-shadow: 0 0 0 2px var\(--bg\), 0 0 0 4px var\(--frontier\); \}/);
-  assert.doesNotMatch(css, /--accent|button-frontier/, "no blue variant or second class left");
-  for (const f of ["src/app.js", "src/participate.js"]) assert.doesNotMatch(read(f), /button-frontier|class="button-link [^"]/, f);
+  assert.doesNotMatch(css, /--accent|button-frontier/, "no blue variant left");
+  assert.doesNotMatch(read("src/participate.js"), /class="button-link [^"]/, "Participate's buttons are all primary");
+  assert.deepEqual(read("src/app.js").match(/class="button-link [^"]*"/g), ['class="button-link button-outline"'], "the GitHub button is the only outline");
   const pair = (name) => css.match(new RegExp(`${name}: light-dark\\(#([0-9a-f]{6}), #([0-9a-f]{6})\\)`)).slice(1);
   const [bgs, fgs] = [pair("--frontier"), pair("--on-frontier")];
   assert.deepEqual(bgs, ["ea6c0a", "fb923c"]);
