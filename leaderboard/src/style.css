@@ -16,6 +16,8 @@
   --pass: light-dark(#13805b, #199e70);
   --fail: light-dark(#c83c3c, #e66767);
   --frontier: light-dark(#ea6c0a, #fb923c);
+  /* White on the frontier orange is under 4.5:1 in both themes; #111 is at least 6:1, hover included. */
+  --on-frontier: light-dark(#111111, #111111);
   --shape-ring: light-dark(#3a3a38cc, #dbdbdbe6);
   --kill-line: light-dark(#8f8f8ae6, #616161eb);
   --muted-mark: light-dark(#a6a6a1, #777777);
@@ -54,8 +56,6 @@ h1, h2, h3, p { margin: 0; }
 /* ----------------------------------------------------------------- head */
 .page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 18px 0 14px; }
 .page-head h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-.page-head-stack { flex-direction: column; align-items: flex-start; gap: 10px; }
-
 /* --------------------------------------------------------- model select */
 .model-select { position: relative; font-size: 12.5px; }
 .model-select summary { color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 4px 8px; transition: border-color .15s, background .15s; user-select: none; }
@@ -74,6 +74,7 @@ h1, h2, h3, p { margin: 0; }
 
 /* -------------------------------------------------------------- scatter */
 .scatter { padding: 12px 14px 14px; }
+.scatter-cta { display: flex; justify-content: center; padding-top: 16px; }
 .scatter-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 0 8px; position: relative; z-index: 5; }
 .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
 .seg button { color: var(--ink-2); padding: 3px 10px; font-size: 12px; transition: background .2s, color .2s; }
@@ -182,6 +183,8 @@ h1, h2, h3, p { margin: 0; }
 a.button-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; color: #fff; background: var(--accent); border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; transition: filter .15s; }
 a.button-link:is(:hover, :focus-visible) { filter: brightness(1.12); outline: none; }
 a.button-link:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+a.button-link.button-frontier { color: var(--on-frontier); background: var(--frontier); }
+a.button-link.button-frontier:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--frontier); }
 /* ---------------------------------------------------- narrow: rail bar */
 @media (max-width: 1050px) {
   .results { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 18px; }

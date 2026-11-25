@@ -229,16 +229,31 @@ test("Participate step copy follows ASD-STE100: short sentences, simple words, o
   assert.doesNotMatch(text, /\w+ing\b/, "no -ing forms");
 });
 
-test("the leaderboard head has a Participate button under the h1, opening Participate in the same tab", () => {
+test("a centered frontier-orange Participate button sits right under the chart, opening Participate in the same tab", () => {
   const app = read("src/app.js"), css = read("src/style.css");
   const head = app.slice(app.indexOf("function headHTML()"), app.indexOf("// --------------------------------------------------------------- scatter"));
-  assert.match(head, /<div class="page-head page-head-stack">\s*<h1>Leaderboard<\/h1>\s*<a class="button-link" href="\$\{ROOT\}participate\/">Participate<\/a>\s*<\/div>/);
-  assert.doesNotMatch(head, /target=|&nearr;/, "an internal link: same tab, no arrow");
+  assert.match(head, /<div class="page-head">\s*<h1>Leaderboard<\/h1>\s*<\/div>/, "the head holds only the heading");
+  const scatter = app.slice(app.indexOf("function scatterHTML("), app.indexOf("function mountScatter("));
+  const cta = '<p class="scatter-cta"><a class="button-link button-frontier" href="${ROOT}participate/">Participate</a></p>';
+  assert.ok(scatter.includes(`<div class="scatter-axis-x"></div></section>\n  ${cta}`), "directly after the chart card");
+  assert.equal(app.split("participate/").length - 1, 1, "one Participate button, rendered on every board page");
   assert.match(app, /const ROOT = document\.documentElement\.dataset\.root/, "the same root-relative path as the nav's Participate tab");
-  assert.match(css, /\.page-head-stack \{ flex-direction: column; align-items: flex-start;/, "the button sits under the heading");
-  assert.match(css, /\na\.button-link \{[^}]*background: var\(--accent\)/, "one primary button style, not scoped to Participate");
-  assert.doesNotMatch(css, /\.participate-links a\.button-link/);
+  assert.match(css, /\.scatter-cta \{ display: flex; justify-content: center;/);
+  assert.match(css, /--frontier: light-dark\(#ea6c0a, #fb923c\)/);
+  assert.match(css, /\.pareto-line \{[^}]*stroke: var\(--frontier\)/, "the frontier line's colour");
+  assert.match(css, /--on-frontier: light-dark\(#111111, #111111\)/);
+  assert.match(css, /a\.button-link\.button-frontier \{ color: var\(--on-frontier\); background: var\(--frontier\); \}/);
+  assert.match(css, /\na\.button-link:is\(:hover, :focus-visible\) \{ filter: brightness\(1\.12\)/, "the same hover as the blue buttons");
+  assert.match(css, /\na\.button-link \{[^}]*background: var\(--accent\)/, "Participate's buttons stay blue");
+  assert.doesNotMatch(read("src/participate.js"), /button-frontier/);
   assert.match(read("src/analytics.js"), /\["link", "a\[href\]"\]/, "button_click reports every link, this one included");
+});
+
+test("the frontier button's text keeps at least 4.5:1 contrast in both themes, hovered or not", () => {
+  const lum = (hex) => [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((s, c, i) => s + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+  const brighten = (hex, f) => [0, 2, 4].map((i) => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * f)).toString(16).padStart(2, "0")).join("");
+  for (const bg of ["ea6c0a", "fb923c"]) for (const f of [1, 1.12]) assert.ok(ratio(brighten(bg, f), "111111") >= 4.5, `${bg} x${f}`);
 });
 
 test("copying a selection out of a code block reports copy_code, and no Copy buttons remain", () => {
@@ -313,7 +328,7 @@ test("every palette colour has a light and a dark value, and data-theme sets the
   const css = read("src/style.css"), rootBlock = css.match(/:root \{([^}]*)\}/)[1];
   assert.match(rootBlock, /color-scheme: light dark;/);
   const colours = [...rootBlock.matchAll(/(--[\w-]+): ([^;]+);/g)].filter(([, , v]) => /#|light-dark/.test(v));
-  assert.equal(colours.length, 17);
+  assert.equal(colours.length, 18);
   for (const [, name, value] of colours) assert.match(value, /^light-dark\(#[0-9a-f]{3,8}, #[0-9a-f]{3,8}\)$/, name);
   assert.match(css, /:root\[data-theme="light"\] \{ color-scheme: light; \}/);
   assert.match(css, /:root\[data-theme="dark"\] \{ color-scheme: dark; \}/);

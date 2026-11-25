@@ -47,9 +47,8 @@ function modelsHTML(v, fromRail) {
 }
 
 function headHTML() {
-  return `<div class="page-head page-head-stack">
+  return `<div class="page-head">
     <h1>Leaderboard</h1>
-    <a class="button-link" href="${ROOT}participate/">Participate</a>
   </div>`;
 }
 
@@ -79,7 +78,8 @@ function scatterHTML(v) {
   return `<section class="card scatter" aria-label="Pass rate against cost">
     <div class="scatter-toolbar"><div class="board-toggles">${modelsHTML(v, false)}</div>
       <div class="seg metric-toggle" role="group" aria-label="Plot against"><button type="button" aria-pressed="true" data-metric="cost">Cost</button><button type="button" aria-pressed="false" data-metric="time">Speed</button></div></div>
-    <div class="scatter-plot"></div><div class="scatter-axis-x"></div></section>`;
+    <div class="scatter-plot"></div><div class="scatter-axis-x"></div></section>
+  <p class="scatter-cta"><a class="button-link button-frontier" href="${ROOT}participate/">Participate</a></p>`;
 }
 
 function mountScatter(root, v) {
