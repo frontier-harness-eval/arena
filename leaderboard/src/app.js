@@ -47,8 +47,9 @@ function modelsHTML(v, fromRail) {
 }
 
 function headHTML() {
-  return `<div class="page-head">
+  return `<div class="page-head page-head-stack">
     <h1>Leaderboard</h1>
+    <a class="button-link" href="${ROOT}participate/">Participate</a>
   </div>`;
 }
 

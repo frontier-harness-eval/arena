@@ -229,6 +229,18 @@ test("Participate step copy follows ASD-STE100: short sentences, simple words, o
   assert.doesNotMatch(text, /\w+ing\b/, "no -ing forms");
 });
 
+test("the leaderboard head has a Participate button under the h1, opening Participate in the same tab", () => {
+  const app = read("src/app.js"), css = read("src/style.css");
+  const head = app.slice(app.indexOf("function headHTML()"), app.indexOf("// --------------------------------------------------------------- scatter"));
+  assert.match(head, /<div class="page-head page-head-stack">\s*<h1>Leaderboard<\/h1>\s*<a class="button-link" href="\$\{ROOT\}participate\/">Participate<\/a>\s*<\/div>/);
+  assert.doesNotMatch(head, /target=|&nearr;/, "an internal link: same tab, no arrow");
+  assert.match(app, /const ROOT = document\.documentElement\.dataset\.root/, "the same root-relative path as the nav's Participate tab");
+  assert.match(css, /\.page-head-stack \{ flex-direction: column; align-items: flex-start;/, "the button sits under the heading");
+  assert.match(css, /\na\.button-link \{[^}]*background: var\(--accent\)/, "one primary button style, not scoped to Participate");
+  assert.doesNotMatch(css, /\.participate-links a\.button-link/);
+  assert.match(read("src/analytics.js"), /\["link", "a\[href\]"\]/, "button_click reports every link, this one included");
+});
+
 test("copying a selection out of a code block reports copy_code, and no Copy buttons remain", () => {
   assert.match(read("src/analytics.js"), /addEventListener\("copy"[\s\S]*?matches\("pre, code"\)[\s\S]*?copy_method: "selection"/);
   for (const f of ["src/app.js", "src/analytics.js", "src/participate.js"]) assert.doesNotMatch(read(f), /codecopy|data-copy|copy-button/, f);

@@ -54,6 +54,7 @@ h1, h2, h3, p { margin: 0; }
 /* ----------------------------------------------------------------- head */
 .page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 18px 0 14px; }
 .page-head h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+.page-head-stack { flex-direction: column; align-items: flex-start; gap: 10px; }
 
 /* --------------------------------------------------------- model select */
 .model-select { position: relative; font-size: 12.5px; }
@@ -178,9 +179,9 @@ h1, h2, h3, p { margin: 0; }
 .participate-list { margin: 0; padding-left: 18px; color: var(--ink-2); display: grid; gap: 4px; }
 .participate-steps { margin: 0; padding-left: 20px; color: var(--ink-2); display: grid; gap: 5px; }
 .participate-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; font-size: 12.5px; }
-.participate-links a.button-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; color: #fff; background: var(--accent); border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; transition: filter .15s; }
-.participate-links a.button-link:is(:hover, :focus-visible) { filter: brightness(1.12); outline: none; }
-.participate-links a.button-link:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+a.button-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; color: #fff; background: var(--accent); border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; transition: filter .15s; }
+a.button-link:is(:hover, :focus-visible) { filter: brightness(1.12); outline: none; }
+a.button-link:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
 /* ---------------------------------------------------- narrow: rail bar */
 @media (max-width: 1050px) {
   .results { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 18px; }
